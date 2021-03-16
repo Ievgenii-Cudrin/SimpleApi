@@ -86,8 +86,7 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                var contracts = await this.contractRepository.FindAsync(x => x.Id == id);
-                var contract = contracts.FirstOrDefault();
+                var contract = await this.contractRepository.GetByIdWithIncludesAsync(id, false, x => x.Items);
 
                 if (contract == null)
                 {
@@ -103,8 +102,8 @@ namespace SimpleApi.Controllers
                     return NotFound();
                 }
 
-                contract = this.mapper.Map<Contract>(contractDTO);
-                contract.Id = id;
+                contract.CustomerId = contractDTO.CustomerId;
+                contract.DeliveryId = contractDTO.DeliveryId;
                 contract.Items = items;
 
                 await this.contractRepository.UpdateAsync(contract);
@@ -119,9 +118,6 @@ namespace SimpleApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [SwaggerResponse(200, Type = typeof(Contract))]
-        [SwaggerResponse(400)]
-        [SwaggerResponse(500)]
         public async Task<IActionResult> Get([FromRoute][Range(1, int.MaxValue)][Required] int id)
         {
             try
