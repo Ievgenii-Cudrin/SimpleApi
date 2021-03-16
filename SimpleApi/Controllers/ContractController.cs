@@ -104,6 +104,8 @@ namespace SimpleApi.Controllers
 
                 contract.CustomerId = contractDTO.CustomerId;
                 contract.DeliveryId = contractDTO.DeliveryId;
+                contract.Items = null;
+                await this.contractRepository.UpdateAsync(contract);
                 contract.Items = items;
 
                 await this.contractRepository.UpdateAsync(contract);

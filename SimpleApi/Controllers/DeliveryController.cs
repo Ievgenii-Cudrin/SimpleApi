@@ -64,16 +64,17 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                var items = await this.deliveryRepository.FindAsync(x => x.Id == id);
-                var item = items.FirstOrDefault();
+                var delivery = await this.deliveryRepository.GetByIdWithIncludesAsync(id, false);
 
-                if (item == null)
+                if (delivery == null)
                 {
                     return NotFound();
                 }
 
-                item = this.mapper.Map<Delivery>(deliveryDTO);
-                await this.deliveryRepository.UpdateAsync(item);
+                delivery.Address = deliveryDTO.Address;
+                delivery.TypeDelivery = (App.Core.Enumeration.DeliveryType)deliveryDTO.TypeDelivery;
+                await this.deliveryRepository.UpdateAsync(delivery);
+
                 return Ok();
             }
             catch (Exception ex)

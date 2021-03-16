@@ -62,16 +62,18 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                var custumers = await this.customerRepository.FindAsync(x => x.Id == id);
-                var customer = custumers.FirstOrDefault();
+                var customer = await this.customerRepository.GetByIdWithIncludesAsync(id, false);
 
                 if (customer == null)
                 {
                     return NotFound();
                 }
 
-                customer = this.mapper.Map<Customer>(customerDTO);
+                customer.Email = customerDTO.Email;
+                customer.FullName = customerDTO.FullName;
+                customer.PhoneNumber = customerDTO.PhoneNumber;
                 await this.customerRepository.UpdateAsync(customer);
+
                 return Ok();
             }
             catch (Exception ex)

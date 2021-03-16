@@ -64,16 +64,21 @@ namespace SimpleApi.Controllers
         {
             try
             {
-                var items = await this.itemRepository.FindAsync(x => x.Id == id);
-                var item = items.FirstOrDefault();
+                var item = await this.itemRepository.GetByIdWithIncludesAsync(id, false);
 
                 if (item == null)
                 {
                     return NotFound();
                 }
 
-                item = this.mapper.Map<Item>(itemDTO);
+                item.Cost = itemDTO.Cost;
+                item.Description = itemDTO.Description;
+                item.Manufacturer = itemDTO.Manufacturer;
+                item.Name = itemDTO.Name;
+                item.Nds = itemDTO.Nds;
+                item.Refrigerate = itemDTO.Refrigerate;
                 await this.itemRepository.UpdateAsync(item);
+
                 return Ok();
             }
             catch (Exception ex)
